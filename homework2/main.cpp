@@ -39,8 +39,6 @@ bool comparelesson2(const alist &a3,const alist &b3)
 int main()
 {
 
-
-
     s1.number=1403130209;
     s1.name="鲁智深";
     s1.lesson1=80;
@@ -62,15 +60,41 @@ int main()
     values.append(s2);
     values.append(s3);
     values.append(s4);
+    qDebug("原序列为：");
+    for(int i=0;i<values.count();i++)
+    {
+        qDebug()<<values.at(i).number;
+        qDebug()<<values.at(i).name;
+        qDebug()<<values.at(i).lesson1;
+        qDebug()<<values.at(i).lesson2;
+        qDebug("\t");
+    }
     std::sort(values.begin(),values.end(),comparename);
+    qDebug("用名字排序为：");
+    for(int i=0;i<values.count();i++)
+    {
+        qDebug()<<values.at(i).number;
+        qDebug()<<values.at(i).name;
+        qDebug()<<values.at(i).lesson1;
+        qDebug()<<values.at(i).lesson2;
+    qDebug("\t");}
     std::sort(values.begin(),values.end(),comparelesson1);
+    qDebug("用科目1成绩排序：");
+    for(int i=0;i<values.count();i++)
+    {
+        qDebug()<<values.at(i).number;
+        qDebug()<<values.at(i).name;
+        qDebug()<<values.at(i).lesson1;
+        qDebug()<<values.at(i).lesson2;
+    qDebug("\t");}
     std::sort(values.begin(),values.end(),comparelesson2);
-
-
-
-
-
-
-
+    qDebug("用科目2成绩排序：");
+    for(int i=0;i<values.count();i++)
+    {
+        qDebug()<<values.at(i).number;
+        qDebug()<<values.at(i).name;
+        qDebug()<<values.at(i).lesson1;
+        qDebug()<<values.at(i).lesson2;
+    qDebug("\t");}
 
 }

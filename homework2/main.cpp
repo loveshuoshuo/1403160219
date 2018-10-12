@@ -13,6 +13,27 @@ typedef struct alist
     int lesson2;
 }student;
 student s1,s2,s3,s4;
+bool comparename(const alist &a1,const alist &b1)
+{
+    if(a1.name<b1.name)
+        return 1;
+    else
+        return 0;
+}
+bool comparelesson1(const alist &a2,const alist &b2)
+{
+    if(a2.lesson1<b2.lesson1)
+        return 1;
+    else
+        return 0;
+}
+bool comparelesson2(const alist &a3,const alist &b3)
+{
+    if(a3.lesson2<b3.lesson2)
+        return 1;
+    else
+        return 0;
+}
 
 
 int main()
@@ -41,6 +62,9 @@ int main()
     values.append(s2);
     values.append(s3);
     values.append(s4);
+    std::sort(values.begin(),values.end(),comparename);
+    std::sort(values.begin(),values.end(),comparelesson1);
+    std::sort(values.begin(),values.end(),comparelesson2);
 
 
 

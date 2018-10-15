@@ -70,13 +70,11 @@ bool myCmp::operator()(const studData &d1, const studData &d2)
     bool result = false;
     quint32 sortedColumn = 0x00000001<<currentColumn;
     switch (sortedColumn) {
-    case SK::col01:result=(d1.number<d2.number);
-    case SK::col02:result=(d1.name<d2.name);
-    case SK::col03:result=(d1.score.at(0)<d2.score.at(0));
-    case SK::col04:result=(d1.score.at(1)<d2.score.at(1));
-    // 请补全运算符重载函数
-    // ...
-    //
+    case SK::col01:result=(d1.number<d2.number);break;
+    case SK::col02:result=(d1.name<d2.name);break;
+    case SK::col03:for(int j=0;j<d1.score.size();j++)result=(d1.score.at(0)<d2.score.at(0));break;
+
+
     }
     return result;
 

@@ -46,11 +46,15 @@ typedef struct{
     QVector<int> score;
 
 } studData;
-QVector<studData> stu;
+
+
+
 
 QDebug operator<< (QDebug d, const studData &data) {
     QDebugStateSaver saver(d);
-    d.nospace()<<data.number<<"\t"<<data.name<<"\t"<<data.score;
+    QString sorces;
+    sorces.append("data.score");
+    d.nospace()<<data.number<<"\t"<<data.name<<"\t"<<sorces;
 
     // 请补全运算符重载函数，使其可以直接输出studData结构
     return d;
@@ -72,7 +76,21 @@ bool myCmp::operator()(const studData &d1, const studData &d2)
     switch (sortedColumn) {
     case SK::col01:result=(d1.number<d2.number);break;
     case SK::col02:result=(d1.name<d2.name);break;
-    case SK::col03:for(int j=0;j<d1.score.size();j++)result=(d1.score.at(0)<d2.score.at(0));break;
+    case SK::col03:result=(d1.score.at(1)<d2.score.at(1));break;
+    case SK::col04:result=(d1.score.at(2)<d2.score.at(2));break;
+    case SK::col05:result=(d1.score.at(3)<d2.score.at(3));break;
+    case SK::col06:result=(d1.score.at(4)<d2.score.at(4));break;
+    case SK::col07:result=(d1.score.at(5)<d2.score.at(5));break;
+    case SK::col08:result=(d1.score.at(6)<d2.score.at(6));break;
+    case SK::col09:result=(d1.score.at(7)<d2.score.at(7));break;
+    case SK::col10:result=(d1.score.at(8)<d2.score.at(8));break;
+    case SK::col11:result=(d1.score.at(9)<d2.score.at(9));break;
+    case SK::col12:result=(d1.score.at(10)<d2.score.at(10));break;
+    case SK::col13:result=(d1.score.at(11)<d2.score.at(11));break;
+    case SK::col14:result=(d1.score.at(12)<d2.score.at(12));break;
+    case SK::col15:result=(d1.score.at(13)<d2.score.at(13));break;
+    case SK::col16:result=(d1.score.at(14)<d2.score.at(14));break;
+    default:;break;
 
 
     }
@@ -86,32 +104,23 @@ class ScoreSorter
 public:
     ScoreSorter(QString dataFile);
     void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-    friend QDebug operator<< (QDebug d, const studData &data);
-    class myCmp;
+    QVector<studData> stu;
+
     // 请补全该类，使其实现上述要求
 };
 
 // 请补全
 ScoreSorter::ScoreSorter(QString dataFile)
 {
-    QFile file(dataFile);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qDebug()<<"不能打开文件!"<<endl;
-    }
-    while(!file.atEnd()) {
-        QString line = file.readLine();
-        stu.append(line);
-    }
-    file.close();
+
+
 
 }
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QTextStream in(&context);
-    in.setCodec("UTF-8");
+
     // 自定义qDebug
 }
 

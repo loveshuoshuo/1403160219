@@ -105,28 +105,62 @@ public:
     ScoreSorter(QString dataFile);
     void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     QVector<studData> stu;
+    readFile(QString dataFile);
+    doSort();
+    QString s;
 
     // 请补全该类，使其实现上述要求
 };
+ScoreSorter::readFile(QString dataFile)
+{
+    QFile file(dataFile);
+    if(!file.open(QFile::WriteOnly|QIODevice::Text))
+    {
+        qDebug()<<QString("文件打开失败").arg(dataFile);
+        return -1;
+    }
+    QTextStream in(&file);
+    in.setCodec("UTF-8");
+    qDebug().noquote().nospace()<<"开始读取文件："<<dataFile;
+    while(!in.atEnd())
+    {
+        QString line=in.readLine();
+        QStringList data=line.split(" ");
+        qDebug()<<data;
+        for(auto s:data)
+            qDebug().noquote().nospace()<<s;
+    }
+    file.close();
+    qDebug.noquote().nospace()<<"文件读取完成"<<dataFile;
+}
+ScoreSorter::doSort()
+{
+    std::sort(stu.begin(),stu.end(),myCmp::operator ());
+}
 
 // 请补全
 ScoreSorter::ScoreSorter(QString dataFile)
 {
-
-
 
 }
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-
+    Q_UNUSED(type);
+    Q_UNUSED(&context);
+    Q_UNUSED(&msg);
+    QFile file("sorted_data.txt");        //输出信息到文件
+    file.open(QIODevice::ReadWrite | QIODevice::Append);
+    QTextStream stream(&file);
+    file.flush();
+    file.close();
     // 自定义qDebug
 }
 
 int main()
 {
-    qInstallMessageHandler(myMessageOutput);
+    qInstallMessageHandler(myMessageOutput);//安装消息处理程序
     QString datafile = "data.txt";
 
     // 如果排序后文件已存在，则删除之

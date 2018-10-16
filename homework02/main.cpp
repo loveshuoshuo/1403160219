@@ -54,6 +54,7 @@ QDebug operator<< (QDebug d, const studData &data) {
     QDebugStateSaver saver(d);
     QString sorces;
     sorces.append("data.score");
+
     d.nospace()<<data.number<<"\t"<<data.name<<"\t"<<sorces;
 
     // 请补全运算符重载函数，使其可以直接输出studData结构
@@ -105,63 +106,68 @@ public:
     ScoreSorter(QString dataFile);
     void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
     QVector<studData> stu;
-    readFile(QString dataFile);
-    doSort();
-    QString s;
+    void readFile(){
+        QFile file(filename);
+        if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
+        {
+            qDebug()<<("文件打开失败");
+            return;
+        }
+        QTextStream in(&file);
+        in.setCodec("UTF-8");
+
+        while(!file.atEnd())
+        {
+            QString line=file.readLine();
+            qDebug()<<line;
+        }
+        file.close();
+    }
+    void doSort()
+    {
+
+    }
+    QString filename;
 
     // 请补全该类，使其实现上述要求
 };
-ScoreSorter::readFile(QString dataFile)
-{
-    QFile file(dataFile);
-    if(!file.open(QFile::WriteOnly|QIODevice::Text))
-    {
-        qDebug()<<QString("文件打开失败").arg(dataFile);
-        return -1;
-    }
-    QTextStream in(&file);
-    in.setCodec("UTF-8");
-    qDebug().noquote().nospace()<<"开始读取文件："<<dataFile;
-    while(!in.atEnd())
-    {
-        QString line=in.readLine();
-        QStringList data=line.split(" ");
-        qDebug()<<data;
-        for(auto s:data)
-            qDebug().noquote().nospace()<<s;
-    }
-    file.close();
-    qDebug.noquote().nospace()<<"文件读取完成"<<dataFile;
-}
-ScoreSorter::doSort()
-{
-    std::sort(stu.begin(),stu.end(),myCmp::operator ());
-}
+
+
 
 // 请补全
-ScoreSorter::ScoreSorter(QString dataFile)
+ScoreSorter::ScoreSorter(QString dataFile)  //构造函数
 {
-
+    filename=dataFile;
 }
 
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    Q_UNUSED(type);
-    Q_UNUSED(&context);
-    Q_UNUSED(&msg);
-    QFile file("sorted_data.txt");        //输出信息到文件
-    file.open(QIODevice::ReadWrite | QIODevice::Append);
-    QTextStream stream(&file);
-    file.flush();
-    file.close();
+     QByteArray localMsg = msg.toLocal8Bit();
+    switch (type) {
+             case QtDebugMsg:
+                 fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                 break;
+             case QtInfoMsg:
+                 fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                 break;
+             case QtWarningMsg:
+                 fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                 break;
+             case QtCriticalMsg:
+                 fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                 break;
+             case QtFatalMsg:
+                 fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+                   abort();
     // 自定义qDebug
+    }
 }
 
 int main()
 {
     qInstallMessageHandler(myMessageOutput);//安装消息处理程序
-    QString datafile = "data.txt";
+    QString datafile = "C:/Users/12717/Desktop/a/homework02/data.txt";
 
     // 如果排序后文件已存在，则删除之
     QFile f("sorted_"+datafile);

@@ -139,7 +139,7 @@ void ScoreSorter::doSort()
     {
         myCmp cmp(i-1);   //初始化
         std::sort(st.begin(),st.end(),cmp);
-        qDebug()<<"当前是第"<<i+1<<"列排序，排序后输出为:"<<"\n"<<"\t"<<rank;
+        qDebug()<<"当前是第"<<i<<"列排序，排序后输出为:"<<"\n"<<"\t"<<rank;
         for(int i=0;i<st.size();i++)
            qDebug()<<st.at(i);
         qDebug()<<"\n";

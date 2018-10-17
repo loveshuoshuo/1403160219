@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QFile>
 
+
 namespace SK {
 enum SortKind{
     col01    =   0x00000001<<0,         //!< 第1列
@@ -41,9 +42,7 @@ enum SortKind{
 }
 
 typedef struct{
-    QString name;
-    QString number;
-    QVector<int> score;
+    QStringList stu;
 
 } studData;
 
@@ -52,10 +51,10 @@ typedef struct{
 
 QDebug operator<< (QDebug d, const studData &data) {
     QDebugStateSaver saver(d);
-    QString sorces;
-    sorces.append("data.score");
-
-    d.nospace()<<data.number<<"\t"<<data.name<<"\t"<<sorces;
+    for(int i=0;i<data.stu.size();i++)
+    {
+    d.nospace().nospace()<<QString(data.stu.at(i))<<"\t";
+    }
 
     // 请补全运算符重载函数，使其可以直接输出studData结构
     return d;
@@ -75,22 +74,22 @@ bool myCmp::operator()(const studData &d1, const studData &d2)
     bool result = false;
     quint32 sortedColumn = 0x00000001<<currentColumn;
     switch (sortedColumn) {
-    case SK::col01:result=(d1.number<d2.number);break;
-    case SK::col02:result=(d1.name<d2.name);break;
-    case SK::col03:result=(d1.score.at(1)<d2.score.at(1));break;
-    case SK::col04:result=(d1.score.at(2)<d2.score.at(2));break;
-    case SK::col05:result=(d1.score.at(3)<d2.score.at(3));break;
-    case SK::col06:result=(d1.score.at(4)<d2.score.at(4));break;
-    case SK::col07:result=(d1.score.at(5)<d2.score.at(5));break;
-    case SK::col08:result=(d1.score.at(6)<d2.score.at(6));break;
-    case SK::col09:result=(d1.score.at(7)<d2.score.at(7));break;
-    case SK::col10:result=(d1.score.at(8)<d2.score.at(8));break;
-    case SK::col11:result=(d1.score.at(9)<d2.score.at(9));break;
-    case SK::col12:result=(d1.score.at(10)<d2.score.at(10));break;
-    case SK::col13:result=(d1.score.at(11)<d2.score.at(11));break;
-    case SK::col14:result=(d1.score.at(12)<d2.score.at(12));break;
-    case SK::col15:result=(d1.score.at(13)<d2.score.at(13));break;
-    case SK::col16:result=(d1.score.at(14)<d2.score.at(14));break;
+    case SK::col01:result=(d1.stu.at(0)<d2.stu.at(0));break;
+    case SK::col02:result=(d1.stu.at(1)<d2.stu.at(1));break;
+    case SK::col03:result=(d1.stu.at(2)<d2.stu.at(2));break;
+    case SK::col04:result=(d1.stu.at(3)<d2.stu.at(3));break;
+    case SK::col05:result=(d1.stu.at(4)<d2.stu.at(4));break;
+    case SK::col06:result=(d1.stu.at(5)<d2.stu.at(5));break;
+    case SK::col07:result=(d1.stu.at(6)<d2.stu.at(6));break;
+    case SK::col08:result=(d1.stu.at(7)<d2.stu.at(7));break;
+    case SK::col09:result=(d1.stu.at(8)<d2.stu.at(8));break;
+    case SK::col10:result=(d1.stu.at(9)<d2.stu.at(9));break;
+    case SK::col11:result=(d1.stu.at(10)<d2.stu.at(10));break;
+    case SK::col12:result=(d1.stu.at(11)<d2.stu.at(11));break;
+    case SK::col13:result=(d1.stu.at(12)<d2.stu.at(12));break;
+    case SK::col14:result=(d1.stu.at(13)<d2.stu.at(13));break;
+    case SK::col15:result=(d1.stu.at(14)<d2.stu.at(14));break;
+    case SK::col16:result=(d1.stu.at(15)<d2.stu.at(15));break;
     default:;break;
 
 
@@ -105,7 +104,7 @@ class ScoreSorter
 public:
     ScoreSorter(QString dataFile);
     void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg);
-    QVector<studData> stu;
+
     void readFile(){
         QFile file(filename);
         if(!file.open(QIODevice::ReadOnly|QIODevice::Text))
@@ -122,12 +121,16 @@ public:
             qDebug()<<line;
         }
         file.close();
+
+
     }
     void doSort()
     {
 
     }
+private:
     QString filename;
+    QVector<studData> st;
 
     // 请补全该类，使其实现上述要求
 };
@@ -143,23 +146,23 @@ ScoreSorter::ScoreSorter(QString dataFile)  //构造函数
 
 void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-     QByteArray localMsg = msg.toLocal8Bit();
+    QByteArray localMsg = msg.toLocal8Bit();
     switch (type) {
-             case QtDebugMsg:
-                 fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-                 break;
-             case QtInfoMsg:
-                 fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-                 break;
-             case QtWarningMsg:
-                 fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-                 break;
-             case QtCriticalMsg:
-                 fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-                 break;
-             case QtFatalMsg:
-                 fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
-                   abort();
+    case QtDebugMsg:
+        fprintf(stderr, "Debug: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtInfoMsg:
+        fprintf(stderr, "Info: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtWarningMsg:
+        fprintf(stderr, "Warning: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtCriticalMsg:
+        fprintf(stderr, "Critical: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        break;
+    case QtFatalMsg:
+        fprintf(stderr, "Fatal: %s (%s:%u, %s)\n", localMsg.constData(), context.file, context.line, context.function);
+        abort();
     // 自定义qDebug
     }
 }

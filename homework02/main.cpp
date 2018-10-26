@@ -41,7 +41,7 @@ enum SortKind{
 };
 }
 
-typedef struct{
+typedef struct{   //结构体
     QStringList stu;
 
 } studData;

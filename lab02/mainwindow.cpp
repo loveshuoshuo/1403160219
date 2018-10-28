@@ -85,7 +85,7 @@ void MainWindow::createToolBar ()
     painter.drawImage(targetRect,image,sourceRect);
     imgBtn=new QToolButton;
     imgBtn->setIcon(QIcon(pixmap));
-   // connect(imgBtn,&QToolButton::clicked,this,&MainWindow::choosepic);
+
 
 
 

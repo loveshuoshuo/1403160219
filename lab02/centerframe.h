@@ -32,6 +32,7 @@ protected slots:
     void on_btnTriangleClicked();
     void on_btnTextClicked();
     void on_btnDiamondClicked();
+    void on_btnDrawpicClicked();
     void on_edtTextEdited(const QString &text);
 private:
     QVBoxLayout* vLayout;
@@ -44,6 +45,7 @@ private:
     QPushButton* btnTriangle;
     QPushButton* btnText;
     QPushButton* btnDiamond;
+    QPushButton* btnDrawpic;
     QLineEdit* edtText;
 };
 

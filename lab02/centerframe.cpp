@@ -135,6 +135,20 @@ void CenterFrame::createUserCommandArea()
     connect(btnDiamond,&QPushButton::clicked,
               this,&CenterFrame::on_btnDiamondClicked);
 
+    //绘制图片
+    btnDrawpic = new QPushButton(group);
+    btnDrawpic ->setToolTip("绘制图片");
+    btnDrawpic ->setCheckable(true);
+    btnDrawpic ->setIconSize(p.size());
+
+    p.fill(FOREGROUND_COLOR);
+    QImage image(":/pic2");
+    QRect targetRect(0,0,p.size().width(),p.size().height());
+    QRect sourceRect =image.rect();
+    painter.drawImage(targetRect,image,sourceRect);
+    btnDrawpic->setIcon (QIcon(p));
+    connect(btnDrawpic,&QPushButton::clicked,this, &CenterFrame::on_btnDrawpicClicked);
+
     // 选项Group布局
     QGridLayout *gridLayout = new QGridLayout();
     gridLayout->addWidget(btnRect,0,0);
@@ -143,6 +157,7 @@ void CenterFrame::createUserCommandArea()
     gridLayout->addWidget(btnLine,1,1);
     gridLayout->addWidget(btnText,2,0);
     gridLayout->addWidget(btnDiamond,2,1);
+    gridLayout->addWidget(btnDrawpic,3,0);
     gridLayout->setMargin(3);
     gridLayout->setSpacing(3);
     group->setLayout(gridLayout);
@@ -332,4 +347,20 @@ void CenterFrame::on_btnDiamondClicked()
     }else{
         drawWidget->setShapeType(ST::None);
     }
+}
+
+//图片按键响应槽函数
+void CenterFrame::on_btnDrawpicClicked()
+{
+    if(btnDrawpic->isChecked())
+    {
+        drawWidget->setShapeType(ST::pic);
+        drawWidget->drawpic();
+        updateButtonStatus();
+    }
+    else
+    {
+        drawWidget->setShapeType(ST::None);
+    }
+
 }

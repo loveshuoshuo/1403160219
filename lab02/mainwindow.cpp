@@ -85,7 +85,7 @@ void MainWindow::createToolBar ()
     painter.drawImage(targetRect,image,sourceRect);
     imgBtn=new QToolButton;
     imgBtn->setIcon(QIcon(pixmap));
-    connect(imgBtn,&QToolButton::clicked,this,&MainWindow::choosepic);
+   // connect(imgBtn,&QToolButton::clicked,this,&MainWindow::choosepic);
 
 
 
@@ -123,10 +123,4 @@ void MainWindow::penColorChangged ()
         colorBtn->setIcon (QIcon(p));
     }
 }
-void MainWindow::choosepic()
-{
-    QPalette p=palette();
-    QPixmap pixmap("pic2");
-    p.setBrush(QPalette::Background,pixmap);
-    setPalette(p);
-}
+

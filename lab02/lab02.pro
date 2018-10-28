@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-10-24T16:17:35
+# Project created by QtCreator 2018-10-28T14:32:38
 #
 #-------------------------------------------------
 
@@ -37,3 +37,5 @@ HEADERS += \
 
 RESOURCES += \
     pic.qrc
+
+DISTFILES +=

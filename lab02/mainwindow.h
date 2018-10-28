@@ -18,12 +18,12 @@ public:
     ~MainWindow();
 
     void createToolBar();
-       void choosepic();
+
 public slots:
     void penStyleChangged(int index=0);
 
     void penColorChangged();
- 
+
 
 private:
 

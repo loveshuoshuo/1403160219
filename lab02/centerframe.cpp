@@ -232,6 +232,8 @@ void CenterFrame::updateButtonStatus()
     btnEllipse->setChecked(false);
     btnText->setChecked(false);
     edtText->setVisible(false);
+    btnDiamond->setChecked(false);
+    btnDrawpic->setChecked(false);
 
     // 然后根据设置的绘图类型重新切换按键状态
     switch (drawWidget->shapeType()) {
@@ -252,6 +254,11 @@ void CenterFrame::updateButtonStatus()
         edtText->setVisible(true);      // 使编辑框可见
         edtText->setFocus();            // 编辑框获得输入焦点
         break;
+    case ST::Diamond:
+        btnDiamond->setChecked(true);
+        break;
+    case ST::pic:
+        btnDrawpic->setChecked(true);
     default:
         break;
     }
@@ -279,6 +286,10 @@ void CenterFrame::clearPaint()
     drawWidget->clear();
 }
 
+void CenterFrame::saveing()
+ {
+    drawWidget->save();      //跳转到 drawWidget 中的save
+ }
 
 void CenterFrame::on_btnRectClicked()
 {
@@ -355,7 +366,8 @@ void CenterFrame::on_btnDrawpicClicked()
     if(btnDrawpic->isChecked())
     {
         drawWidget->setShapeType(ST::pic);
-        drawWidget->drawpic();
+          QImage iconImage;
+        drawWidget->drawpic(iconImage);
         updateButtonStatus();
     }
     else

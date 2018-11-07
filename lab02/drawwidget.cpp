@@ -4,19 +4,20 @@
 #include <QMessageBox>
 #include <QString>
 #include <QFileDialog>
-#include <QMessageBox>
+#include <QPointF>
+
 
 
 DrawWidget::DrawWidget(QWidget *parent) : QWidget(parent)
 {
     drawType = ST::None;
     canDraw = false;
+    canSticker=false;
     setAutoFillBackground (true);   //设置窗体背景色
     setPalette (QPalette(BACKGROUND_COLOR));
     pix = new QPixmap(size());      //此QPixmap对象用来准备随时接受绘制的内容
     pix->fill (BACKGROUND_COLOR);          //填充背景色为白色
     setMinimumSize (600, 400);      //设置绘制区窗体的最小尺寸
-
 }
 
 DrawWidget::~DrawWidget()
@@ -73,28 +74,7 @@ void DrawWidget::mouseMoveEvent (QMouseEvent *e)
     }
 }
 
-void DrawWidget::drawpic()
-{
 
-    QString open_fileName;  //获取文件路径
-    open_fileName = QFileDialog::getOpenFileName(this,tr("选择图片"), ".",tr("Image Files (*.png *.jpg *.bmp)"));
-
-    if(open_fileName.isEmpty())
-    {
-        QMessageBox mesg;
-        mesg.warning(this,"警告","没有选择图片");
-        return;
-    }
-    //绘制选择的图片
-    pix->load(open_fileName);
-    QPixmap *newPix = new QPixmap(size());
-    newPix->fill (BACKGROUND_COLOR);
-    QPainter p(newPix);
-    p.drawPixmap (QPoint((width()-pix->width())/2,(height()-pix->width())/2), *pix);
-    delete pix;
-    pix = newPix;
-    update();
-}
 
 void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
 {
@@ -113,7 +93,9 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
 void DrawWidget::paintEvent (QPaintEvent *)
 {
     QPainter painter(this);
+
     painter.drawPixmap (QPoint(0, 0), *pix);
+
 }
 
 
@@ -219,6 +201,78 @@ QRectF DrawWidget::textRect(const QPointF ptStart, const QPointF ptEnd, QString 
 
 
 
+void DrawWidget::save()
+{
+    QString fileName=QFileDialog::getSaveFileName(this);
+    if(!fileName.isEmpty())
+        this->pix->save(fileName);
+}
+
+void DrawWidget::sticker()
+{
+    QString fileName=QFileDialog::getOpenFileName(this);
+    if(!fileName.isEmpty())
+    {
+        QImage iconImage;
+        iconImage.load(fileName);
+        this->stickerImage=iconImage;
+        this->canSticker=true;
+    }
+}
+
+void DrawWidget::drawpic(QImage iconImage)
+{
+
+    QString open_fileName;  //获取文件路径
+    open_fileName = QFileDialog::getOpenFileName(this,tr("选择图片"), ".",tr("Image Files (*.png *.jpg *.bmp)"));
+
+    //绘制选择的图片
+    pix->load(open_fileName);
+    QPixmap *newPix = new QPixmap(size());
+    *newPix=QPixmap(*this->pix);
+    QPainter p;
+    QPointF pos;
+    if (this->canSticker)
+    {                          //画sticker情形
+ //        *pix = QPixmap::fromImage(iconImage.scaledToWidth( iconImage.width(), Qt::FastTransformation));
+        *pix = QPixmap::fromImage(iconImage.scaledToHeight(std::abs(startpos.y()-endpos.y() ),Qt::FastTransformation));
+        pos=QPointF(( this->startpos + this -> endpos ) /2)  ;
+    }
+    else {               //正中添加图片,宽度为当前窗口的0.5倍,高度自动缩放
+        *pix = QPixmap::fromImage(iconImage.scaledToWidth(width()*0.5 , Qt::FastTransformation));
+        pos=QPointF((width()-this->pix->width())/2,(height()-this->pix->height())/2) ;
+    }
+    p.begin(newPix);
+    p.drawPixmap (pos, *pix);
+    delete pix;
+    pix = newPix;
+    update();
+}
+
+/*void DrawWidget::grap(QImage iconImage)
+{
+   QPainter p;
+   QPointF pos;
+   QPixmap *newPix = new QPixmap(size());
+   *newPix=QPixmap(*this->pix);             //新的pix拷贝原内容,避免之前所画内容丢失
+   if (this->canSticker)
+   {                          //画sticker情形
+//        *pix = QPixmap::fromImage(iconImage.scaledToWidth( iconImage.width(), Qt::FastTransformation));
+       *pix = QPixmap::fromImage(iconImage.scaledToHeight(std::abs(startpos.y()-endpos.y() ),Qt::FastTransformation));
+       pos=QPointF(( this->startpos + this -> endpos ) /2)  ;
+   }
+   else {               //正中添加图片,宽度为当前窗口的0.5倍,高度自动缩放
+       *pix = QPixmap::fromImage(iconImage.scaledToWidth(width()*0.5 , Qt::FastTransformation));
+       pos=QPointF((width()-this->pix->width())/2,(height()-this->pix->height())/2) ;
+   }
+   // QPainter p(newPix);
+   p.begin(newPix);
+   p.drawPixmap (pos, *pix);
+   delete pix;     //删除原pix
+   pix = newPix;
+   update();
+}*/
+
 void DrawWidget::drawShape(const QPointF ptStart,const QPointF ptEnd,const ST::ShapeType drawType)
 {
     QPainter painter;
@@ -227,10 +281,11 @@ void DrawWidget::drawShape(const QPointF ptStart,const QPointF ptEnd,const ST::S
     pen.setStyle ((Qt::PenStyle)style);
     pen.setWidth (weight);
     pen.setColor (color);
-
     painter.begin (pix);
+
     // 抗锯齿必须在painter激活后，也就是绘制对象确定后设置
     painter.setRenderHint(QPainter::Antialiasing);
+
     painter.setPen (pen);
     switch (drawType) {
     case ST::Rectangle:

@@ -25,6 +25,7 @@ public slots:
     void setPenWidth(int width=1);
     void setPenColor(QColor color);
     void clearPaint();
+    void saveing();
 protected slots:
     void on_btnRectClicked();
     void on_btnEllipseClicked();

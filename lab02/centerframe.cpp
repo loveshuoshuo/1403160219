@@ -9,6 +9,7 @@
 #include <QGridLayout>
 #include <QLineEdit>
 #include <QDebug>
+#include <QFileDialog>
 
 CenterFrame::CenterFrame(QWidget *parent) : QFrame(parent)
 {
@@ -136,17 +137,14 @@ void CenterFrame::createUserCommandArea()
               this,&CenterFrame::on_btnDiamondClicked);
 
     //绘制图片
-    btnDrawpic = new QPushButton(group);
-    btnDrawpic ->setToolTip("绘制图片");
-    btnDrawpic ->setCheckable(true);
-    btnDrawpic ->setIconSize(p.size());
-
-    p.fill(FOREGROUND_COLOR);
-    QImage image(":/pic2");
-    QRect targetRect(0,0,p.size().width(),p.size().height());
-    QRect sourceRect =image.rect();
-    painter.drawImage(targetRect,image,sourceRect);
-    btnDrawpic->setIcon (QIcon(p));
+    btnDrawpic =new QPushButton(group);
+    QPixmap ima(p.width(),p.height());//与按钮同大小
+    ima.fill(BACKGROUND_COLOR);
+    ima.load(imagFile);
+    btnDrawpic->setIcon(QIcon(ima));//将ima作为按钮
+    btnDrawpic->setCheckable(true);
+    btnDrawpic->setIconSize(p.size());
+    btnDrawpic->setToolTip("绘制图片");
     connect(btnDrawpic,&QPushButton::clicked,this, &CenterFrame::on_btnDrawpicClicked);
 
     // 选项Group布局
@@ -232,8 +230,6 @@ void CenterFrame::updateButtonStatus()
     btnEllipse->setChecked(false);
     btnText->setChecked(false);
     edtText->setVisible(false);
-    btnDiamond->setChecked(false);
-    btnDrawpic->setChecked(false);
 
     // 然后根据设置的绘图类型重新切换按键状态
     switch (drawWidget->shapeType()) {
@@ -254,11 +250,6 @@ void CenterFrame::updateButtonStatus()
         edtText->setVisible(true);      // 使编辑框可见
         edtText->setFocus();            // 编辑框获得输入焦点
         break;
-    case ST::Diamond:
-        btnDiamond->setChecked(true);
-        break;
-    case ST::pic:
-        btnDrawpic->setChecked(true);
     default:
         break;
     }
@@ -286,10 +277,6 @@ void CenterFrame::clearPaint()
     drawWidget->clear();
 }
 
-void CenterFrame::saveing()
- {
-    drawWidget->save();      //跳转到 drawWidget 中的save
- }
 
 void CenterFrame::on_btnRectClicked()
 {
@@ -363,11 +350,10 @@ void CenterFrame::on_btnDiamondClicked()
 //图片按键响应槽函数
 void CenterFrame::on_btnDrawpicClicked()
 {
+    imagFile=QFileDialog::getOpenFileName(this, tr("Open File"),"/home",tr("Images (*.png *.xpm *.jpg)"));
     if(btnDrawpic->isChecked())
     {
-        drawWidget->setShapeType(ST::pic);
-          QImage iconImage;
-        drawWidget->drawpic(iconImage);
+        drawWidget->drawpic(imagFile);
         updateButtonStatus();
     }
     else

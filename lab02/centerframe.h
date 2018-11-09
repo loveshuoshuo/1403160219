@@ -25,7 +25,6 @@ public slots:
     void setPenWidth(int width=1);
     void setPenColor(QColor color);
     void clearPaint();
-    void saveing();
 protected slots:
     void on_btnRectClicked();
     void on_btnEllipseClicked();
@@ -35,6 +34,7 @@ protected slots:
     void on_btnDiamondClicked();
     void on_btnDrawpicClicked();
     void on_edtTextEdited(const QString &text);
+
 private:
     QVBoxLayout* vLayout;
     QHBoxLayout* hLayout;
@@ -48,6 +48,7 @@ private:
     QPushButton* btnDiamond;
     QPushButton* btnDrawpic;
     QLineEdit* edtText;
+    QString imagFile=":/pic2";
 };
 
 #endif // CENTERFRAME_H

@@ -18,7 +18,7 @@ public:
     void setShapeType(ST::ShapeType type);
     ST::ShapeType shapeType();
     void setDrawnText(QString text);
-    void drawpic(QImage iconImage);
+    void drawpic(QString pic);
 
 
 protected:
@@ -38,20 +38,18 @@ public slots:
     void setColor(QColor);
     void clear();
 
-    void save();
-    void sticker();
 
 private :
+    QPixmap *ima;
     QPixmap *pix;
     QPoint startpos;
     QPoint endpos;
     bool canDraw;
-    bool canSticker;
     int style;
     int weight;
     QColor color;
     ST::ShapeType drawType;
     QString drawnText;
-    QImage stickerImage;
+    int size_imag=0;//图片大小
 };
 #endif // DRAWWIDGET_H

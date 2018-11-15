@@ -26,6 +26,7 @@ public:
 
     void setRequestcity(QString newcity);
     QString requestcity();
+    void getYRange(qreal * miny,qreal * maxy);
 
 protected:
     QString requestUrl();
@@ -34,6 +35,7 @@ protected:
     void parseHTML(const QString sourceText);
     void parseData(const QString sourceText);
     void exportDataToFile(const QString dataText);
+
 
 protected slots:
     void httpsFinished(QNetworkReply *reply);
@@ -50,6 +52,7 @@ private:
 
     const QString splitter;                 //!< 数据分隔符
     const QString dataPath;                 //!< 数据保存路径
+
 
 signals:
     /**

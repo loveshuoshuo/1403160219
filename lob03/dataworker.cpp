@@ -32,17 +32,13 @@ dataWorker::dataWorker(QString date, QObject *parent) :
 
 void dataWorker::setRequestcity(QString newcity)
 {
-    _requestcity=newcity.replace("南京","nanjing");
-    _requestcity=newcity.replace("上海","shanghai");
-    _requestcity=newcity.replace("北京","beijing");
-    _requestcity=newcity.replace("杭州","hangzhou");
-    _requestcity=newcity.replace("哈尔滨","haerbin");
+  _requestcity=newcity;
 }
 
-void dataWorker::requestcity()
-{
-    return _requestcity();
-}
+//QString dataWorker::requestcity()
+//{
+//    return _requestcity;
+//}
 /**
  * @brief 设置请求年月的setter函数
  * @param newDate 新的年月
@@ -63,7 +59,7 @@ void dataWorker::setRequestDate(QString newDate)
  */
 QString dataWorker::requestDate()
 {
-    return _requestDate;
+   return _requestDate;
 }
 
 /**
@@ -75,7 +71,7 @@ QString dataWorker::requestDate()
 void dataWorker::doRequest()
 {
     // 导入数据，首先检查是否已经存在数据文件
-    QString fName = QString("%1/%2.txt").arg(dataPath,_requestDate);
+    QString fName = QString("%1/%2%3.txt").arg(dataPath,_requestDate,_requestcity);
 //    qDebug()<<fName;
     QStringList dataList;
     QFile f(fName);
@@ -102,7 +98,7 @@ void dataWorker::doRequest()
 QString dataWorker::requestUrl()
 {    
     QString r =
-            QString("https://lishi.tianqi.com/nanjing/%1.html").arg(_requestDate);
+             QString("https://lishi.tianqi.com/%1/%2.html").arg(_requestcity,_requestDate);
     qDebug()<<r;
     return r;
 }
@@ -112,6 +108,7 @@ QString dataWorker::requestUrl()
  *
  *  该函数创建一个QNetworkAccessManager类的指针对象，并连接相应的信号和槽。
  */
+
 void dataWorker::initNetwork()
 {
     manager = new QNetworkAccessManager(this);

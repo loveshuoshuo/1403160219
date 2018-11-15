@@ -101,19 +101,34 @@ void DrawWidget::mouseReleaseEvent(QMouseEvent *e)
 void DrawWidget::paintEvent (QPaintEvent *)
 {
     QPainter painter(this);
-    painter.drawPixmap((this->width()/4)-5*size_imag,this->height()/4-5*size_imag,(this->width()/2)+10*size_imag,this->height()/2+10*size_imag,*ima);
     painter.drawPixmap (QPoint(0, 0), *pix);
+    //painter.drawPixmap((this->width()/4)-5*size_imag,this->height()/4-5*size_imag,(this->width()/2)+10*size_imag,this->height()/2+10*size_imag,*ima);
+
 }
 
 
 void DrawWidget::resizeEvent (QResizeEvent *event)
 {
-    if(height () > pix->height () || width() > pix->width ())
+    if(height () !=pix->height () || width()!= pix->width ())
     {
-        QPixmap *newPix = new QPixmap(size());
+       /* QPixmap *newPix = new QPixmap(size());
         newPix->fill (Qt::transparent);
         QPainter p(newPix);
-        p.drawPixmap (QPoint(0, 0), *pix);
+        p.drawPixmap (QPoint(0, 0), *pix);*/
+        QRect imgrect ;
+        if(ima->width()<=ima->height()){
+            imgrect=QRect((this->width()-this->height()*ima->width()/ima->height())/2,0,this->height()*ima->width()/ima->height(),this->height());
+        }
+        else{
+            imgrect=QRect(0,(this->height()-this->width()*ima->height()/ima->width())/2,this->width(),this->width()*ima->height()/ima->width());
+        }
+        // QRect imgrect=QRect(0,(this->height()-this->width())/2,this->width(),this->width());
+
+        QImage ima2=ima->toImage();
+        QPixmap *newPix=new QPixmap(size());
+        newPix->fill(BACKGROUND_COLOR);
+        QPainter p(newPix);
+        p.drawImage(imgrect,ima2);
         delete pix;     //一定要删除原来的对象，否则会出现内存泄漏
         pix = newPix;
     }

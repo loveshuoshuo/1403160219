@@ -84,7 +84,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QRadioButton" name="temperature">
           <property name="tabletTracking">
            <bool>false</bool>
           </property>
@@ -103,9 +103,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_2">
+         <widget class="QRadioButton" name="AQI">
           <property name="text">
-           <string>查询AOI</string>
+           <string>AQI,PM2.5</string>
           </property>
          </widget>
         </item>

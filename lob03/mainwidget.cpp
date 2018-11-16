@@ -116,47 +116,92 @@ void mainWidget::resetChart(const QString &title)
  */
 void mainWidget::addLineSeries(QChart *chart, const QString &seriesName, const QColor color, const int lineWidth)
 {
+    if(ui->temperature->isChecked())
+    {
+        // 新建一个序列
+        QLineSeries* series = new QLineSeries;
+        // 将序列添加入chart中
+        chart->addSeries(series);
+        chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    // 新建一个序列
-    QLineSeries* series = new QLineSeries;
-    // 将序列添加入chart中
-    chart->addSeries(series);
-    chart->setAnimationOptions(QChart::SeriesAnimations);
+        // 设置序列的线宽和颜色
+        QPen pen(color);
+        pen.setWidth(lineWidth);
+        series->setPen(pen);
 
-    // 设置序列的线宽和颜色
-    QPen pen(color);
-    pen.setWidth(lineWidth);
-    series->setPen(pen);
+        series->setPointsVisible(true);
 
-    series->setPointsVisible(true);
+        // 序列名称，显示在legend中
+        series->setName(seriesName);
 
-    // 序列名称，显示在legend中
-    series->setName(seriesName);
+        if(chart->series().count() == 1){
+            // 第一次添加序列，新增一个Axes，
+            chart->createDefaultAxes();
 
-    if(chart->series().count() == 1){
-        // 第一次添加序列，新增一个Axes，
-        chart->createDefaultAxes();
+            // 设置2个坐标轴
+            QDateTimeAxis *mAxisX = new QDateTimeAxis;
+            mAxisX->setFormat("MM-dd");
+            mAxisX->setTitleText("日期");
+            mAxisX->setTickCount(10+1);
+            mAxisX->setRange(QDateTime::currentDateTime().addMonths(-1),QDateTime::currentDateTime());
 
-        // 设置2个坐标轴
-        QDateTimeAxis *mAxisX = new QDateTimeAxis;
-        mAxisX->setFormat("MM-dd");
-        mAxisX->setTitleText("日期");
-        mAxisX->setTickCount(10+1);
-        mAxisX->setRange(QDateTime::currentDateTime().addMonths(-1),QDateTime::currentDateTime());
+            QValueAxis *mAxisY = new QValueAxis;
+            mAxisY->setRange(-15,40);
+            mAxisY->setLabelFormat("%g");
+            mAxisY->setTitleText("摄氏度(°C)");
 
-        QValueAxis *mAxisY = new QValueAxis;
-        mAxisY->setRange(-15,40);
-        mAxisY->setLabelFormat("%g");
-        mAxisY->setTitleText("摄氏度(°C)");
+            chart->setAxisX(mAxisX,series);
+            chart->setAxisY(mAxisY,series);
+        }else{
+            // 将新增加的列与现有坐标轴连接上
+            QDateTimeAxis *mAxisX = qobject_cast<QDateTimeAxis*>(chart->axisX());
+            QValueAxis *mAxisY = qobject_cast<QValueAxis*>(chart->axisY());
+            chart->setAxisX(mAxisX,series);
+            chart->setAxisY(mAxisY,series);
+        }}
+    if(ui->AQI->isChecked()){
+        // 新建一个序列
+        QLineSeries* series = new QLineSeries;
+        // 将序列添加入chart中
+        chart->addSeries(series);
+        chart->setAnimationOptions(QChart::SeriesAnimations);
 
-        chart->setAxisX(mAxisX,series);
-        chart->setAxisY(mAxisY,series);
-    }else{
-        // 将新增加的列与现有坐标轴连接上
-        QDateTimeAxis *mAxisX = qobject_cast<QDateTimeAxis*>(chart->axisX());
-        QValueAxis *mAxisY = qobject_cast<QValueAxis*>(chart->axisY());
-        chart->setAxisX(mAxisX,series);
-        chart->setAxisY(mAxisY,series);
+        // 设置序列的线宽和颜色
+        QPen pen(color);
+        pen.setWidth(lineWidth);
+        series->setPen(pen);
+
+        series->setPointsVisible(true);
+
+        // 序列名称，显示在legend中
+        series->setName(seriesName);
+
+        if(chart->series().count() == 1){
+            // 第一次添加序列，新增一个Axes，
+            chart->createDefaultAxes();
+
+            // 设置2个坐标轴
+            QDateTimeAxis *mAxisX = new QDateTimeAxis;
+            mAxisX->setFormat("MM-dd");
+            mAxisX->setTitleText("日期");
+            mAxisX->setTickCount(10+1);
+            mAxisX->setRange(QDateTime::currentDateTime().addMonths(-1),QDateTime::currentDateTime());
+
+            QValueAxis *mAxisY = new QValueAxis;
+            mAxisY->setRange(0,350);
+            mAxisY->setLabelFormat("%g");
+            mAxisY->setTitleText("空气质量");
+
+            chart->setAxisX(mAxisX,series);
+            chart->setAxisY(mAxisY,series);
+        }else{
+            // 将新增加的列与现有坐标轴连接上
+            QDateTimeAxis *mAxisX = qobject_cast<QDateTimeAxis*>(chart->axisX());
+            QValueAxis *mAxisY = qobject_cast<QValueAxis*>(chart->axisY());
+            chart->setAxisX(mAxisX,series);
+            chart->setAxisY(mAxisY,series);
+        }
+
     }
 }
 
@@ -252,6 +297,7 @@ void mainWidget::on_btnStart_clicked()
     // 禁用两个按键
     ui->comboMonth->setEnabled(false);
     ui->btnStart->setEnabled(false);
+    ui->combocity->setEnabled(false);
 
     //选择城市
     if(ui->combocity->currentText()=="北京")
@@ -275,16 +321,33 @@ void mainWidget::on_btnStart_clicked()
         worker->setRequestcity("shanghai");
     }
 
-
+if(ui->temperature->isChecked())
+{
+    worker->setMode("查询天气");
     // 设置chart的标题
     QString chartTitle = "";
     if(ui->comboMonth->count()>0){
         chartTitle = ui->comboMonth->currentText().replace("-","年");
         chartTitle.append(QString("月 %1气温").arg(ui->combocity->currentText()));
+        resetChart(chartTitle);
     }else{
         chartTitle="气温";
     }
-    resetChart(chartTitle);
+}
+else if(ui->AQI->isChecked())
+{
+    worker->setMode("AQI,PM2.5");
+    QString chartTitle = "";
+    if(ui->comboMonth->count()>0){
+        chartTitle = ui->comboMonth->currentText().replace("-","年");
+        chartTitle.append(QString("月 %1空气质量").arg(ui->combocity->currentText()));
+        resetChart(chartTitle);
+    }else{
+        chartTitle="空气质量";
+    }
+
+}
+
 
     // 设置dataWorker对象的请求年月
     worker->setRequestDate(ui->comboMonth->currentText());
@@ -307,7 +370,8 @@ void mainWidget::on_btnStart_clicked()
 void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, QList<qreal> tempLow)
 {
     QChart* chart = ui->chartview->chart();
-
+    if(ui->temperature->isChecked())
+    {
     // 添加第一条数据曲线
     addLineSeries(chart,"日最高温度",Qt::red,2);
     QLineSeries* seriesHigh = qobject_cast<QLineSeries*> (chart->series().last());
@@ -323,10 +387,33 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, Q
         seriesHigh->append(date.at(i).toMSecsSinceEpoch(),tempHigh.at(i));
         seriesLow->append(date.at(i).toMSecsSinceEpoch(),tempLow.at(i));
     }
-
     // 设置坐标轴
     QDateTimeAxis *mAxisX = qobject_cast<QDateTimeAxis*>(chart->axisX());
     mAxisX->setRange(date.first(),date.last());
+    }
+
+    if(ui->AQI->isChecked())
+    {
+        // 添加第一条数据曲线
+        addLineSeries(chart,"PM2.5",Qt::red,2);
+        QLineSeries* seriesHigh = qobject_cast<QLineSeries*> (chart->series().last());
+        seriesHigh->setPointsVisible(ui->cbShowPoint->isChecked());
+
+        // 添加第二条数据曲线
+        addLineSeries(chart,"AOL",Qt::blue,2);
+        QLineSeries* seriesLow = qobject_cast<QLineSeries*> (chart->series().last());
+        seriesLow->setPointsVisible(ui->cbShowPoint->isChecked());
+
+        // 向每条曲线中添加数据
+        for (int i=0; i<date.count();i++){
+            seriesHigh->append(date.at(i).toMSecsSinceEpoch(),tempHigh.at(i));
+            seriesLow->append(date.at(i).toMSecsSinceEpoch(),tempLow.at(i));
+        }
+        // 设置坐标轴
+        QDateTimeAxis *mAxisX = qobject_cast<QDateTimeAxis*>(chart->axisX());
+        mAxisX->setRange(date.first(),date.last());
+
+    }
 
     connectMarkers();
     // 显示图注
@@ -336,6 +423,7 @@ void mainWidget::updateDataChart(QList<QDateTime> date, QList<qreal> tempHigh, Q
 
     // 使能两个按钮
     ui->comboMonth->setEnabled(true);
+    ui->combocity->setEnabled(true);
     ui->btnStart->setEnabled(true);
 }
 

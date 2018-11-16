@@ -26,7 +26,8 @@ public:
 
     void setRequestcity(QString newcity);
     QString requestcity();
-    void getYRange(qreal * miny,qreal * maxy);
+    void setMode(QString newMode);
+    QString requestMode();
 
 protected:
     QString requestUrl();
@@ -45,6 +46,7 @@ private:
     QString _requestDate;                   //!< 请求年月
 
     QString _requestcity;                  //!<请求城市
+    QString _requestMode;
 
     QList<QDateTime> dataDate;              //!< 日期
     QList<qreal> dataHigh;                  //!< 最高温度
